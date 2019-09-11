@@ -33,16 +33,12 @@ class Balloon {
     shape(_shape);
   }
   
-  
-  
-  
-  void OnHit() {
-    
+  public bool OnHit(int damage) {
+    _hp = _hp - damage;
   }
   
-  void Pop() {
-    
+  public bool Popped() {
+	  return _hp < 1;
   }
-
 
 };

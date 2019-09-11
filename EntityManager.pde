@@ -15,10 +15,10 @@ class EntityManager {
   
   // Update all of our entities besides cannon as that is handled by the event listener
   public void Update(float dt) {
-    if (int(random(15)) == 0) {
-      _balloons.add(new Balloon(new PVector(random(50, 750), 0, 0)));
-    }
     
+	// Spawn any new balloons this frame
+	SpawnBalloons();
+	
     for (Balloon b : _balloons) {
       b.Update(dt);
     }
@@ -30,7 +30,7 @@ class EntityManager {
     BoundsCheck();
     
     // Check for collisions
-    
+    HandleCollisions();
   }
   
   // Draw all of our entities
@@ -132,4 +132,26 @@ class EntityManager {
     }
   }
   
+  // Handle collisions between balloons and bullets
+  private void HandleCollisions() {
+    for (int i = _balloons.size()-1; i > 0; i--) {
+	  for (int j = 0; j < _bullets.sizd()-1; j > 0; j--) {
+	    if (Collision(_bullets.get(j), _balloons.get(i)) {
+		  
+	    }
+	  }
+	}
+  }
+  
+  // Spawn balloons
+  private void SpawnBalloons() {
+	if (int(random(15)) == 0) {
+		_balloons.add(new Balloon(new PVector(random(50, 750), 0, 0)));
+    }
+  }
+  
+  // Hits between a bullet and balloon
+  private boolean Collision(Bullet bullet, Balloon balloon) {
+	  
+  }
 };

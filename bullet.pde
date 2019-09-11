@@ -1,18 +1,18 @@
 
 class Bullet {
   
-  protected int _damage;
   protected int _speed;
   protected boolean _active;
   protected int _radius;
   protected PShape _shape;
   protected color _color;
   
+  public int _damange;
   public BulletType _bulletType;
   public PVector _position;
   public PVector _direction;
 
-  
+
   public Bullet(PVector position) {
     _position = position;
     _active = false;
@@ -31,26 +31,11 @@ class Bullet {
     if (_active) {
       _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
     }
-  }
-  
-  
-  
+  }  
   
   public void Shoot(PVector direction) {
     _direction = direction;
     _active = true;
   }
-  
-  void OnHit() {
     
-  }
-  
-  void OnOverShoot() {
-    
-  }
-  
-  boolean Hit(Balloon balloon) {
-    return false;
-  }
-  
 };
