@@ -1,12 +1,11 @@
 
 class Balloon {
   
-  private float _smallRadius;
-  private float _bigRadius;
   private float _speed;
   private PShape _shape;
   private color _color;
   
+  public float _radius;
   public PVector _position;
   public PVector _direction;
   public int _hp = 5;
@@ -15,9 +14,8 @@ class Balloon {
     _position = position;
     _direction = new PVector(0, 1, 0);
     
-    _smallRadius = random(20, 80);
-    _bigRadius = 1.8 * _smallRadius;
-    _speed = sqrt(_smallRadius*_smallRadius + _bigRadius*_bigRadius) / 2.0;
+    _radius = random(20, 80);
+    _speed = sqrt(_radius*_radius + _radius*_radius) / 2.0;
     
     _color = color(random(255), random(255), random(255), int(random(100, 200)));
   }
@@ -29,15 +27,15 @@ class Balloon {
   public void DrawBalloon() {
     fill(_color);
     ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _smallRadius, _bigRadius);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius, _radius);
     shape(_shape);
   }
   
-  public bool OnHit(int damage) {
+  public void OnHit(int damage) {
     _hp = _hp - damage;
   }
   
-  public bool Popped() {
+  public boolean Popped() {
 	  return _hp < 1;
   }
 

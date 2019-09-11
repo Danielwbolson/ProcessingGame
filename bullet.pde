@@ -3,11 +3,11 @@ class Bullet {
   
   protected int _speed;
   protected boolean _active;
-  protected int _radius;
   protected PShape _shape;
   protected color _color;
   
-  public int _damange;
+  public float _radius;
+  public int _damage;
   public BulletType _bulletType;
   public PVector _position;
   public PVector _direction;

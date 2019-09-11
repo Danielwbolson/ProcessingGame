@@ -135,12 +135,12 @@ class EntityManager {
   // Handle collisions between balloons and bullets
   private void HandleCollisions() {
     for (int i = _balloons.size()-1; i > 0; i--) {
-	  for (int j = 0; j < _bullets.sizd()-1; j > 0; j--) {
-	    if (Collision(_bullets.get(j), _balloons.get(i)) {
-		  
+      for (int j = _bullets.size()-1; j > 0; j--) {
+        if (Collision(_bullets.get(j), _balloons.get(i))) {
+          
+	      }
 	    }
 	  }
-	}
   }
   
   // Spawn balloons
@@ -152,6 +152,14 @@ class EntityManager {
   
   // Hits between a bullet and balloon
   private boolean Collision(Bullet bullet, Balloon balloon) {
-	  
+    
+    // Get Vector from bullet to balloon
+    PVector balloonToBullet = PVector.sub(bullet._position, balloon._position);
+    
+    // Calculate total distance between balloon and bullet
+    float dist = balloonToBullet.mag();
+    
+    // If our distance is less than the sum of our radius'
+
   }
 };
