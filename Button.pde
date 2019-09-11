@@ -17,7 +17,7 @@ class Button {
   public void DrawButton() {
     fill(_color);
      ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius, _radius);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
     shape(_shape);
   }
   

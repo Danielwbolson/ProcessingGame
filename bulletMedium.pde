@@ -3,7 +3,8 @@ class MediumBullet extends Bullet {
   
   public MediumBullet(PVector position) {
     super(position);
-    _damage = 2;
+    _damage = 4;
+    _damageLeft = _damage;
     _speed = 200;
     _radius = 30;
     _color = color(0, 255, 255, 255);

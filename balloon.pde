@@ -8,7 +8,7 @@ class Balloon {
   public float _radius;
   public PVector _position;
   public PVector _direction;
-  public int _hp = 5;
+  public int _hp = 2;
 
   public Balloon(PVector position) {
     _position = position;
@@ -27,7 +27,7 @@ class Balloon {
   public void DrawBalloon() {
     fill(_color);
     ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius, _radius);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
     shape(_shape);
   }
   
