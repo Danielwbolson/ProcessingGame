@@ -1,5 +1,5 @@
 
-class Cannon {
+class Ship {
   
   public PVector _position;
   public PVector _direction;
@@ -17,14 +17,14 @@ class Cannon {
   private int _lastMediumShot;
   private int _lastLargeShot;
   
-  public Cannon(PVector pos, PVector dir) {
+  public Ship(PVector pos, PVector dir) {
     _position = pos;
     _direction = dir;
     rectMode(CENTER);
     _shape = createShape(RECT, _position.x, _position.y, _width, _height);
   }
   
-  public void DrawCannon() {
+  public void DrawShip() {
     fill(255);
     shape(_shape);
   }

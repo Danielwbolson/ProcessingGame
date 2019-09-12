@@ -12,10 +12,10 @@ class UIHandler {
     _entityManager = em;
     
     // Place our buttons
-    _quit = new Button(new PVector(50, 50, 0), 40, color(0, 0, 255, 255));
-    _loadSmallBullet = new Button(new PVector(50, 600, 0), 30, color(255, 0, 255, 255));
-    _loadMediumBullet = new Button(new PVector(50, 660, 0), 40, color(0, 255, 255, 255));
-    _loadLargeBullet = new Button(new PVector(50, 725, 0), 50, color(255, 255, 0, 255));
+    _quit = new Button(new PVector(30, 30, 0), 20, color(255, 0, 0, 255));
+    _loadSmallBullet = new Button(new PVector(30, 680, 0), 15, color(255, 0, 255, 255));
+    _loadMediumBullet = new Button(new PVector(30, 720, 0), 20, color(0, 255, 255, 255));
+    _loadLargeBullet = new Button(new PVector(30, 770, 0), 25, color(255, 255, 0, 255));
     
     // Start out cannon with a small shot
     _entityManager.EventListener(Event.loadSmall);
@@ -60,6 +60,21 @@ class UIHandler {
       
     }
     
+    // User input for cannon movement
+    if (keyPressed) {
+      if (key == 'w' || key == 'W') {
+        _entityManager.EventListener(Event.forward);
+      }
+      if (key == 'a' || key == 'A') {
+        _entityManager.EventListener(Event.left);
+      }
+      if (key == 's' || key == 'S') {
+        _entityManager.EventListener(Event.back);
+      }
+      if (key == 'd' || key == 'D') {
+        _entityManager.EventListener(Event.right);
+      }
+    }
   }
   
   public void DrawUI() {

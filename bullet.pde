@@ -39,8 +39,8 @@ class Bullet {
     _active = true;
   }
 
-  public void LosePower() {
-    _damageLeft = _damageLeft - 1;
+  public void LosePower(int hp) {
+    _damageLeft = _damageLeft - hp;
   }
 
   public boolean OutOfPower() {

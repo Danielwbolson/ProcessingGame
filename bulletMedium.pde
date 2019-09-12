@@ -6,7 +6,7 @@ class MediumBullet extends Bullet {
     _damage = 4;
     _damageLeft = _damage;
     _speed = 200;
-    _radius = 30;
+    _radius = 15;
     _color = color(0, 255, 255, 255);
     _bulletType = BulletType.medium;
   }

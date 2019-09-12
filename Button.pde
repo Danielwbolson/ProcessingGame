@@ -11,7 +11,6 @@ class Button {
     _position = position;
     _radius = radius;
     _color = c;
-    println(hex(_color));
   }
   
   public void DrawButton() {

@@ -11,13 +11,17 @@ enum Event {
   shoot,
   loadSmall,
   loadMedium,
-  loadLarge
+  loadLarge,
+  forward,
+  left,
+  right,
+  back
 };
 
 // Shot cooldowns in milliseconds
 // I want an enum so that values can be shared amongst classes and only changed in one place
 enum CooldownTime {
-  smallCooldown(200),
+  smallCooldown(150),
   mediumCooldown(500),
   largeCooldown(2000);
   
