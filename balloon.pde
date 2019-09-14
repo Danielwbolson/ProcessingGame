@@ -8,8 +8,9 @@ class Balloon {
   
   public float _radius;
   public PVector _position;
-  public PVector _direction;
   public int _hp;
+  
+  private PVector _direction;
 
   public Balloon(PVector position) {
     _position = position;

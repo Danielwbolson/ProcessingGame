@@ -53,3 +53,11 @@ float calculateDt() {
   _elapsedTime = currTime;
   return dt;
 }
+
+void keyPressed() {
+  _uiHandler.HandleKeyPressed(); 
+}
+
+void keyReleased() {
+  _uiHandler.HandleKeyReleased(); 
+}
