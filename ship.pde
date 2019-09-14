@@ -1,92 +1,56 @@
 
 class Ship {
-  
+
   public PVector _position;
   public PVector _direction;
-  
+  public boolean _slowingDownVertical;
+  public boolean _slowingDownHorizontal;
+  public int _width = 20;
+  public int _height = 40;
+
   private PShape _shape;
-  private int _width = 10;
-  private int _height = 20;
-  
-  private BulletType _lastBullet;
-  
+  private float _speed = 200;
+
   private int _sbCooldownTime = CooldownTime.smallCooldown.getCode();
-  private int _mbCooldownTime = CooldownTime.mediumCooldown.getCode();
-  private int _lbCooldownTime = CooldownTime.largeCooldown.getCode();
   private int _lastSmallShot;
-  private int _lastMediumShot;
-  private int _lastLargeShot;
-  
-  public Ship(PVector pos, PVector dir) {
+
+  public Ship(PVector pos) {
     _position = pos;
-    _direction = dir;
-    rectMode(CENTER);
-    _shape = createShape(RECT, _position.x, _position.y, _width, _height);
+    _direction = new PVector(0, 0, 0);
   }
-  
+
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+
+    if (_slowingDownHorizontal || _slowingDownVertical) {
+      SlowDown();
+    }
+  }
+
   public void DrawShip() {
     fill(255);
+    rectMode(CENTER);
+    _shape = createShape(RECT, _position.x, _position.y, _width, _height);
     shape(_shape);
   }
-  
-  public void Aim(PVector dir) {
-    _direction = (PVector.sub(dir, _position)).normalize();
-  }
-  
+
   public void Shoot(Bullet bullet) {
-    if (CanShoot(bullet._bulletType)) {
-      bullet.Shoot(_direction);
-      
-      _lastBullet = bullet._bulletType;
-      Cooldown(_lastBullet);
-    }
+    bullet.Shoot(new PVector(0, -1, 0));
+    _lastSmallShot = millis();
   }
-  
-  private boolean CanShoot(BulletType bt) {
-    switch(bt) {
-      
-      case small:
-        if (millis() - _lastSmallShot > _sbCooldownTime) {
-          return true;
-        }
-        return false;
-        
-      case medium:
-        if (millis() - _lastMediumShot > _mbCooldownTime) {
-          return true;
-        }
-        return false;
-        
-      case large:
-        if (millis() - _lastLargeShot > _lbCooldownTime) {
-            return true;
-        }
-        return false;
-        
-      default:
-        return true;
-        
-    }
+
+  public void SlowDown() {    
+    if (_slowingDownHorizontal) { _direction.x = _direction.x * 0.9f; }
+    if (_slowingDownVertical) { _direction.y = _direction.y * 0.9f; }
+
+    if (abs(_direction.x) < 0.1) {  _direction.x = 0; }
+    if (abs(_direction.y) < 0.1) {  _direction.y = 0; }
   }
-  
-  private void Cooldown(BulletType bt) {
-    switch(bt) {
-      
-      case small:
-        _lastSmallShot = millis();
-        break;
-        
-      case medium:
-        _lastMediumShot = millis();
-        break;
-        
-      case large:
-        _lastLargeShot = millis();
-        break;
-        
-     default:
-       break;
+
+  private boolean CanShoot() {
+    if (millis() - _lastSmallShot > _sbCooldownTime) {
+      return true;
     }
+    return false;
   }
-  
 };

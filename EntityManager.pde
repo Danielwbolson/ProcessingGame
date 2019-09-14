@@ -4,107 +4,71 @@ class EntityManager {
   private ArrayList<Balloon> _balloons;
   private ArrayList<Bullet> _bullets;
   private Ship _ship;
+  private BalloonSpawner _balloonSpawner;
 
   public EntityManager() {
-    _balloons = new ArrayList<Balloon>();
-    _bullets = new ArrayList<Bullet>();
+    _balloons   = new ArrayList<Balloon>();
+    _bullets    = new ArrayList<Bullet>();
     PVector pos = new PVector (400, 700, 0);
-    _ship = new Ship(pos, new PVector(0, -1, 0));
+    _ship       = new Ship(pos);
   }
 
   // Update all of our entities besides cannon as that is handled by the event listener
   public void Update(float dt) {
+    for (Balloon b : _balloons) { b.Update(dt); }
+    for (Bullet b : _bullets)   { b.Update(dt); }
+    _ship.Update(dt);
 
-    // Spawn any new balloons this frame
-    SpawnBalloons();
-
-    for (Balloon b : _balloons) {
-      b.Update(dt);
-    }
-    for (Bullet b : _bullets) {
-      b.Update(dt);
-    }
-
-    // Check for out of bounds
     BoundsCheck();
-
-    // Check for collisions
     HandleCollisions();
-
-    // Kill off our entities that shouldn't exist
     DespawnEntities();
+    SpawnBalloons();
   }
 
   // Draw all of our entities
   public void DrawEntities() {
-    for (Balloon b : _balloons) {
-      b.DrawBalloon();
-    }
-    for (Bullet b : _bullets) {
-      b.DrawBullet();
-    }
+    for (Balloon b : _balloons) { b.DrawBalloon(); }
+    for (Bullet b : _bullets)   { b.DrawBullet(); }
     _ship.DrawShip();
-  }
-
-  // Aim our cannon as dictated by our UIHandler
-  public void AimCannon(PVector position) {
-    _ship.Aim(position);
   }
 
   // Waits for user events in regard to the cannon and responds appropriately
   public void EventListener(Event event) {
-
     switch (event) {
-
-    case shoot:
-      // Attempt to shoot our cannon
-      Bullet b = _bullets.get(_bullets.size()-1);
-      _ship.Shoot(b);
-
-      {
-        // Queue up another of our most recently used bullet
-        switch(b._bulletType) {
-        case small:
-          _bullets.add(new SmallBullet(_ship._position));
-          break;
-
-        case medium:
-          _bullets.add(new MediumBullet(_ship._position));
-          break;
-
-        case large:
-          _bullets.add(new LargeBullet(_ship._position));
-          break;
-
-        default:
-          _bullets.add(new SmallBullet(_ship._position));
-          break;
-        }
+    case shoot: 
+      if (_ship.CanShoot()) {
+        Bullet b = new SmallBullet(_ship._position);
+        _bullets.add(b);
+        _ship.Shoot(b);
       }
-
       break;
 
-    case loadSmall:
-      // Dump our current bullet and load the wanted one
-      if (_bullets.size() != 0) {
-        _bullets.remove(_bullets.size()-1);
-      }
-      // Load up our new bullet
-      _bullets.add(new SmallBullet(_ship._position));
+    case forward:
+      _ship._direction.y = -1;
+      _ship._slowingDownVertical = false;
       break;
 
-    case loadMedium:
-      if (_bullets.size() != 0) {
-        _bullets.remove(_bullets.size()-1);
-      }
-      _bullets.add(new MediumBullet(_ship._position));
+    case back:
+      _ship._direction.y = 1;
+      _ship._slowingDownVertical = false;
       break;
 
-    case loadLarge:
-      if (_bullets.size() != 0) {
-        _bullets.remove(_bullets.size()-1);
-      }
-      _bullets.add(new LargeBullet(_ship._position));
+    case left:
+      _ship._direction.x = -1;
+      _ship._slowingDownHorizontal = false;
+      break;
+
+    case right:
+      _ship._direction.x = 1;
+      _ship._slowingDownHorizontal = false;
+      break;
+
+    case slowVertical:
+      _ship._slowingDownVertical = true;
+      break;
+
+    case slowHorizontal:
+      _ship._slowingDownHorizontal = true;      
       break;
 
     default:
@@ -112,7 +76,7 @@ class EntityManager {
     }
   }
 
-  // Check if our balloons or bullets have gone outside the window and if so delete them
+  // Check if our balloons, bullets, or ship have gone outside the window
   private void BoundsCheck() {
     for (int i = _balloons.size()-1; i >= 0; i--) {
       Balloon b = _balloons.get(i);
@@ -131,9 +95,21 @@ class EntityManager {
         _bullets.remove(i);
       }
     }
+    
+    if (_ship._position.x > width - _ship._width / 2.0f) {
+      _ship._position.x = width - _ship._width / 2.0f;
+    }
+    if (_ship._position.x < _ship._width / 2.0f) {
+      _ship._position.x = _ship._width / 2.0f;
+    }
+    if (_ship._position.y > height - _ship._height / 2.0f) {
+      _ship._position.y = height - _ship._height / 2.0f;
+    }
+    if (_ship._position.y < _ship._height / 2.0f) {
+      _ship._position.y = _ship._height / 2.0f;
+    }
   }
 
-  // Handle collisions between balloons and bullets
   private void HandleCollisions() {
     for (int i = _balloons.size()-1; i >= 0; i--) {
       for (int j = _bullets.size()-1; j >= 0; j--) {
@@ -145,14 +121,12 @@ class EntityManager {
     }
   }
 
-  // Spawn balloons
   private void SpawnBalloons() {
-    if (int(random(15)) == 0) {
+    if (int(random(30)) == 0) {
       _balloons.add(new Balloon(new PVector(random(50, 750), 0, 0)));
     }
   }
 
-  // Hits between a bullet and balloon
   private boolean Collision(Bullet bullet, Balloon balloon) {
 
     // Get Vector from bullet to balloon
@@ -165,7 +139,6 @@ class EntityManager {
     return (dist < bullet._radius + balloon._radius);
   }
 
-  // Despawn our necessary entities
   private void DespawnEntities() {
     for (int i = _balloons.size()-1; i >= 0; i--) {
       if (_balloons.get(i).Popped()) {
@@ -178,4 +151,5 @@ class EntityManager {
       }
     }
   }
+  
 };
