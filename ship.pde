@@ -7,31 +7,17 @@ class Ship {
   public boolean _slowingDownHorizontal;
   public int _width = 20;
   public int _height = 40;
+  public color _color;
 
   private PShape _shape;
-  private float _speed = 200;
-
+  private float _speed = 300;
   private int _sbCooldownTime = CooldownTime.smallCooldown.getCode();
   private int _lastSmallShot;
 
   public Ship(PVector pos) {
     _position = pos;
     _direction = new PVector(0, 0, 0);
-  }
-
-  public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-
-    if (_slowingDownHorizontal || _slowingDownVertical) {
-      SlowDown();
-    }
-  }
-
-  public void DrawShip() {
-    fill(255);
-    rectMode(CENTER);
-    _shape = createShape(RECT, _position.x, _position.y, _width, _height);
-    shape(_shape);
+    _color = color(255);
   }
 
   public void Shoot(Bullet bullet) {

@@ -7,31 +7,37 @@ class EntityManager {
   private BalloonSpawner _balloonSpawner;
 
   public EntityManager() {
-    _balloons   = new ArrayList<Balloon>();
     _bullets    = new ArrayList<Bullet>();
     PVector pos = new PVector (400, 700, 0);
     _ship       = new Ship(pos);
+    
+    _balloonSpawner = new BalloonSpawner();
+    _balloons = _balloonSpawner._balloons;
   }
 
   // Update all of our entities besides cannon as that is handled by the event listener
   public void Update(float dt) {
-    for (Balloon b : _balloons) { b.Update(dt); }
-    for (Bullet b : _bullets)   { b.Update(dt); }
-    _ship.Update(dt);
+    for (Balloon b : _balloons) {
+      b._position = PVector.add(b._position, PVector.mult(b._direction, b._speed * dt));
+      
+      color col = b._color;
+      b._color = color(red(col), green(col), blue(col), 255 * ((float)b._hp / b._maxHP));
+    }
+    for (Bullet b : _bullets)   { 
+      b._position = PVector.add(b._position, PVector.mult(b._direction, b._speed * dt));
+    }
+    
+    _ship._position = PVector.add(_ship._position, PVector.mult(_ship._direction, _ship._speed * dt));
+    if (_ship._slowingDownHorizontal || _ship._slowingDownVertical) {
+      _ship.SlowDown();
+    }
 
     BoundsCheck();
     HandleCollisions();
     DespawnEntities();
     SpawnBalloons();
   }
-
-  // Draw all of our entities
-  public void DrawEntities() {
-    for (Balloon b : _balloons) { b.DrawBalloon(); }
-    for (Bullet b : _bullets)   { b.DrawBullet(); }
-    _ship.DrawShip();
-  }
-
+  
   // Waits for user events in regard to the cannon and responds appropriately
   public void EventListener(Event event) {
     switch (event) {
@@ -125,6 +131,8 @@ class EntityManager {
     if (int(random(30)) == 0) {
       _balloons.add(new Balloon(new PVector(random(50, 750), 0, 0)));
     }
+    
+    // _balloonSpawner
   }
 
   private boolean Collision(Bullet bullet, Balloon balloon) {

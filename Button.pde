@@ -1,23 +1,24 @@
 
 class Button {
   
-  private PVector _position;
-  private PShape _shape;
-  private int _radius;
-  private color _color;
-  private int _activeOffset;
+  public int _strokeWeight;
+  public int _strokeVal;
+  
+  protected PVector _position;
+  protected PShape _shape;
+  protected int _radius;
+  protected color _color;
+  protected Event _event;
+  protected char keyBind; 
+  
+  private int _activeOffset = 80;
   
   public Button(PVector position, int radius, color c) {
     _position = position;
     _radius = radius;
     _color = c;
-  }
-  
-  public void DrawButton() {
-    fill(_color);
-     ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
-    shape(_shape);
+    _strokeWeight = 1;
+    _strokeVal = 0;
   }
   
   // Check if the user has clicked inside our button
@@ -29,12 +30,40 @@ class Button {
     return false;
   }
   
+  public Event Clicked() {
+    return _event;
+  }
+  
   public void NotActive() {
+    _strokeWeight = 1;
+    _strokeVal = 0;
     _color = color(red(_color)+_activeOffset, green(_color)+_activeOffset, blue(_color)+_activeOffset, alpha(_color));
   }
   
   public void Active() {
+    _strokeWeight = 4;
+    _strokeVal = 255;
     _color = color(red(_color)-_activeOffset, green(_color)-_activeOffset, blue(_color)-_activeOffset, alpha(_color));
   }
   
-}
+};
+
+
+class BombButton extends Button {
+ 
+  BombButton(PVector position, int radius, color c) {
+    super(position, radius, c);
+    _event = Event.bomb;
+  }
+  
+};
+
+
+class BackupButton extends Button {
+ 
+  BackupButton(PVector position, int radius, color c) {
+    super(position, radius, c);
+    _event = Event.backup;
+  }
+  
+};

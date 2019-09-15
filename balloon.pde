@@ -5,12 +5,11 @@ class Balloon {
   private PShape _shape;
   private color _color;
   private int _maxHP;
+  private PVector _direction;
   
   public float _radius;
   public PVector _position;
   public int _hp;
-  
-  private PVector _direction;
 
   public Balloon(PVector position) {
     _position = position;
@@ -23,14 +22,6 @@ class Balloon {
     _hp = _maxHP;
     
     _color = color(random(255), random(255), random(255), int(random(100, 200)));
-  }
-  
-  public void Update(float dt) {
-    // Update position
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-    
-    // Update color based on _hp
-    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
   
   public void DrawBalloon() {
@@ -48,4 +39,36 @@ class Balloon {
 	  return _hp < 1;
   }
 
+};
+
+class FighterBalloon extends Balloon {
+  
+  FighterBalloon(PVector position) {
+    super(position);
+  }
+  
+};
+
+class CarrierBalloon extends Balloon {
+  
+  CarrierBalloon(PVector position) {
+    super(position);
+  }
+  
+};
+
+class ArmoredBalloon extends Balloon {
+  
+  ArmoredBalloon(PVector position) {
+    super(position);
+  }
+  
+};
+
+class ScreamerBalloon extends Balloon {
+  
+  ScreamerBalloon(PVector position) {
+    super(position);
+  }
+  
 };

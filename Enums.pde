@@ -8,6 +8,8 @@ enum Event {
   back,
   slowHorizontal,
   slowVertical,
+  bomb,
+  backup
 };
 
 // Shot cooldowns in milliseconds
