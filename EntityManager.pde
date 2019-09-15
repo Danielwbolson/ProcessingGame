@@ -76,6 +76,10 @@ class EntityManager {
     case slowHorizontal:
       _ship._slowingDownHorizontal = true;      
       break;
+      
+    case bomb:
+    case backup:
+      break;
 
     default:
       break;
@@ -127,12 +131,10 @@ class EntityManager {
     }
   }
 
-  private void SpawnBalloons() {
-    if (int(random(30)) == 0) {
-      _balloons.add(new Balloon(new PVector(random(50, 750), 0, 0)));
+  private void SpawnBalloons() {   
+    if (int(random(random(15, 60))) == 0) {
+      _balloons.add(_balloonSpawner.AddBalloon());
     }
-    
-    // _balloonSpawner
   }
 
   private boolean Collision(Bullet bullet, Balloon balloon) {

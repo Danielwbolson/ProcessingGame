@@ -1,5 +1,4 @@
 
-// Events from our ui handler to communicate with our entitymanager
 enum Event {
   shoot,
   forward,

@@ -52,7 +52,7 @@ class MediumBullet extends Bullet {
     _damageLeft = _damage;
     _speed = 200;
     _radius = 15;
-    _color = color(0, 255, 255, 255);
+    _color = color(255, 165, 0, 255);
   }
   
 };
@@ -65,7 +65,7 @@ class SmallBullet extends Bullet {
     _damageLeft = _damage;
     _speed = 1000;
     _radius = 4;
-    _color = color(255, 0, 255, 255);
+    _color = color(0, 255, 255, 255);
   }
   
 };

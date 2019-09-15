@@ -6,10 +6,12 @@ class UIHandler {
   private Button _activeButton;
 
   // Key Presses
-  boolean wPressed;
-  boolean aPressed;
-  boolean sPressed;
-  boolean dPressed;
+  boolean pressedW;
+  boolean pressedA;
+  boolean pressedS;
+  boolean pressedD;
+  boolean pressed1;
+  boolean pressed2;
 
   public UIHandler(GameManager gm) {
     _gameManager = gm;
@@ -52,27 +54,34 @@ class UIHandler {
   }
 
   private void KeyEvents() {
-    if (wPressed) { _gameManager.EventListener(Event.forward); }
-    if (aPressed) { _gameManager.EventListener(Event.left); }
-    if (sPressed) { _gameManager.EventListener(Event.back); }
-    if (dPressed) { _gameManager.EventListener(Event.right); }
+    if (pressedW) { _gameManager.EventListener(Event.forward); }
+    if (pressedA) { _gameManager.EventListener(Event.left); }
+    if (pressedS) { _gameManager.EventListener(Event.back); }
+    if (pressedD) { _gameManager.EventListener(Event.right); }
     
-    if (!wPressed && !sPressed) { _gameManager.EventListener(Event.slowVertical); }
-    if (!aPressed && !dPressed) { _gameManager.EventListener(Event.slowHorizontal); }
+    if (!pressedW && !pressedS) { _gameManager.EventListener(Event.slowVertical); }
+    if (!pressedA && !pressedD) { _gameManager.EventListener(Event.slowHorizontal); }
+    
+    if (pressed1) { _gameManager.EventListener(Event.backup); }
+    if (pressed2) { _gameManager.EventListener(Event.bomb); }
   }
 
   private void HandleKeyPressed() {
-    if (key == 'w' || key == 'W') { wPressed = true; }
-    if (key == 'a' || key == 'A') { aPressed = true; }
-    if (key == 's' || key == 'S') { sPressed = true; }
-    if (key == 'd' || key == 'D') { dPressed = true; }
+    if (key == 'w' || key == 'W') { pressedW = true; }
+    if (key == 'a' || key == 'A') { pressedA = true; }
+    if (key == 's' || key == 'S') { pressedS = true; }
+    if (key == 'd' || key == 'D') { pressedD = true; }
+    if (key == '1' || key == '!') { pressed1 = true; }
+    if (key == '2' || key == '@') { pressed2 = true; }
   }
 
   private void HandleKeyReleased() {
-    if (key == 'w' || key == 'W') { wPressed = false; }
-    if (key == 's' || key == 'S') { sPressed = false; }
-    if (key == 'a' || key == 'A') { aPressed = false; }
-    if (key == 'd' || key == 'D') { dPressed = false; }
+    if (key == 'w' || key == 'W') { pressedW = false; }
+    if (key == 's' || key == 'S') { pressedS = false; }
+    if (key == 'a' || key == 'A') { pressedA = false; }
+    if (key == 'd' || key == 'D') { pressedD = false; }
+    if (key == '1' || key == '!') { pressed1 = false; }
+    if (key == '2' || key == '@') { pressed2 = false; }
   }
 
 };

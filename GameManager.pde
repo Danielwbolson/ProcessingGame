@@ -4,7 +4,6 @@ class GameManager {
   private EntityManager _entityManager;
   private UIHandler _uiHandler;
   private GameRenderer _gameRenderer;
-  
   private float _elapsedTime;
 
   GameManager() {
@@ -48,7 +47,6 @@ class GameManager {
       break;
     }
   }
-  
   
   public void HandleKeyPressed() {
     _uiHandler.HandleKeyPressed();
