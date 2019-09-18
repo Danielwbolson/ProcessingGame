@@ -20,6 +20,21 @@ class Ship {
     _color = color(255);
   }
 
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    
+    if (_slowingDownHorizontal || _slowingDownVertical) {
+      SlowDown();
+    }
+  }
+  
+  public void Draw() {
+    fill(_color);
+    rectMode(CENTER);
+    _shape = createShape(RECT, _position.x, _position.y, _width, _height);
+    shape(_shape);
+  }
+
   public void Shoot(Bullet bullet) {
     bullet.Shoot(new PVector(0, -1, 0));
     _lastSmallShot = millis();

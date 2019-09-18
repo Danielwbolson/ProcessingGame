@@ -16,7 +16,18 @@ class Bullet {
     _position = position;
     _direction = new PVector(0, -1, 0);
   }
+  
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+  }
 
+  public void Draw() {
+      fill(_color);
+      ellipseMode(CENTER);
+      _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+      shape(_shape);
+  }
+  
   public void Shoot(PVector direction) {
     _direction = direction;
   }

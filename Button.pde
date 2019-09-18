@@ -20,6 +20,19 @@ class Button {
     _strokeWeight = 1;
     _strokeVal = 0;
   }
+
+  public void Draw() {      
+    push();
+    
+    stroke(_strokeVal);
+    strokeWeight(_strokeWeight);
+    fill(_color);
+    rectMode(CENTER);
+    b._shape = createShape(RECT, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape); 
+    
+    pop();
+  }
   
   // Check if the user has clicked inside our button
   public boolean IsClicked(PVector pos) {

@@ -1,4 +1,7 @@
-  
+
+
+// Run with Visual Studio Code:
+// Ctrl + Shift + B
 GameManager _gameManager;
 
 void setup() {    

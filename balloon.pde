@@ -18,6 +18,15 @@ class Balloon {
     _color = color(random(255), random(255), random(255), int(random(100, 200)));
   }
   
+  public void Update(float dt) {}
+
+  public void Draw() {      
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);
+  }
+  
   public void DrawBalloon() {
     fill(_color);
     ellipseMode(CENTER);
@@ -32,6 +41,8 @@ class Balloon {
   public boolean Popped() {
 	  return _hp < 1;
   }
+
+  public void OnPop() {}
 
 };
 
@@ -65,6 +76,10 @@ class CarrierBalloon extends Balloon {
     _color = #d3d3d3;
   }
   
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
+  }
 };
 
 // Big tanky balloon which shoots bit shots
@@ -81,6 +96,15 @@ class ArmoredBalloon extends Balloon {
     _color = #36454f;
   }
   
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
+  }
+
+  public boolean OnPop() {
+    Upgrade
+  }
+  
 };
 
 // Races for player hoping for a collision
@@ -95,6 +119,11 @@ class ScreamerBalloon extends Balloon {
     _speed = 250;
     
     _color = #000000;
+  }
+  
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
   
 };

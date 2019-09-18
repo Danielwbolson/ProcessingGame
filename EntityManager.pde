@@ -3,34 +3,29 @@ class EntityManager {
 
   private ArrayList<Balloon> _balloons;
   private ArrayList<Bullet> _bullets;
+  private ArrayList<BalloonDrop> _balloonDrops;
   private Ship _ship;
   private BalloonSpawner _balloonSpawner;
 
   public EntityManager() {
-    _bullets    = new ArrayList<Bullet>();
-    PVector pos = new PVector (400, 700, 0);
-    _ship       = new Ship(pos);
-    
     _balloonSpawner = new BalloonSpawner();
-    _balloons = _balloonSpawner._balloons;
+    _balloons       = _balloonSpawner._balloons;
+
+    _bullets    = new ArrayList<Bullet>();
+    _upgrades   = new ArrayList<Upgrade>();
+    PVector pos = new PVector (400, 700, 0);
+    _ship       = new Ship(pos);    
   }
 
   // Update all of our entities besides cannon as that is handled by the event listener
   public void Update(float dt) {
     for (Balloon b : _balloons) {
-      b._position = PVector.add(b._position, PVector.mult(b._direction, b._speed * dt));
-      
-      color col = b._color;
-      b._color = color(red(col), green(col), blue(col), 255 * ((float)b._hp / b._maxHP));
+      b.Update(dt);
     }
     for (Bullet b : _bullets)   { 
-      b._position = PVector.add(b._position, PVector.mult(b._direction, b._speed * dt));
+      b.Update(dt);
     }
-    
-    _ship._position = PVector.add(_ship._position, PVector.mult(_ship._direction, _ship._speed * dt));
-    if (_ship._slowingDownHorizontal || _ship._slowingDownVertical) {
-      _ship.SlowDown();
-    }
+    _ship.Update(dt);
 
     BoundsCheck();
     HandleCollisions();
@@ -152,6 +147,7 @@ class EntityManager {
   private void DespawnEntities() {
     for (int i = _balloons.size()-1; i >= 0; i--) {
       if (_balloons.get(i).Popped()) {
+        _balloons.get(i).OnPop();
         _balloons.remove(i);
       }
     }
