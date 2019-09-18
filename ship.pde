@@ -40,7 +40,7 @@ class Ship {
   public void Shoot(Bullet bullet) {
 
     // TODO: CREATE NEW NEEDED BULLET
-
+    
     bullet.Shoot(new PVector(0, -1, 0));
     _lastShot = millis();
   }
@@ -52,6 +52,11 @@ class Ship {
     if (abs(_direction.x) < 0.1) {  _direction.x = 0; }
     if (abs(_direction.y) < 0.1) {  _direction.y = 0; }
   }
+
+  public void Upgrade() {
+
+  }
+
 
   private boolean CanShoot() {
     if (millis() - _lastShot > _shotCooldownTime) {

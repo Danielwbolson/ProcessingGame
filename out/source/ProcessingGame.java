@@ -39,137 +39,6 @@ public void keyReleased() {
   _gameManager.HandleKeyReleased(); 
 }
 
-class Balloon {
-  
-  protected PShape _shape;
-  protected int _color;
-  protected int _maxHP;
-  protected PVector _direction;
-  protected float _speed;
-  
-  public float _radius;
-  public PVector _position;
-  public int _hp;
-
-  public Balloon(PVector position) {
-    _position = position;
-    _direction = new PVector(0, 1, 0);
-    
-    _color = color(random(255), random(255), random(255), PApplet.parseInt(random(100, 200)));
-  }
-  
-  public void Update(float dt) {}
-
-  public void Draw() {      
-    fill(_color);
-    ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
-    shape(_shape);
-  }
-  
-  public void DrawBalloon() {
-    fill(_color);
-    ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
-    shape(_shape);
-  }
-  
-  public void OnHit(int damage) {
-    _hp = _hp - damage;
-  }
-  
-  public boolean Popped() {
-	  return _hp < 1;
-  }
-
-  public void OnPop() {}
-
-};
-
-// Flies out and shoots roughly in direction of enemy
-// Small fast shots
-class FighterBalloon extends Balloon {
-  
-  FighterBalloon(PVector position) {
-    super(position);
-    _hp = 1;
-    _maxHP = _hp;
-    
-    _radius = 15;
-    _speed = 150;
-    _color = 0xff4b5320;
-  }
-  
-};
-
-// Tankier Balloon which carries infinite-until-destroyed fighters
-class CarrierBalloon extends Balloon {
-  
-  CarrierBalloon(PVector position) {
-    super(position);
-    _hp = 10;
-    _maxHP = _hp;
-        
-    _radius = 40;
-    _speed = 50;
-    
-    _color = 0xffd3d3d3;
-  }
-  
-  public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
-  }
-
-  public void OnPop() {}
-};
-
-// Big tanky balloon which shoots bit shots
-class ArmoredBalloon extends Balloon {
-  
-  ArmoredBalloon(PVector position) {
-    super(position);
-    _hp = 25;
-    _maxHP = _hp;
-        
-    _radius = 60;
-    _speed = 25;
-    
-    _color = 0xff36454f;
-  }
-  
-  public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
-  }
-
-  public void OnPop() {}
-  
-};
-
-// Races for player hoping for a collision
-class ScreamerBalloon extends Balloon {
-  
-  ScreamerBalloon(PVector position) {
-    super(position);
-    _hp = 1;
-    _maxHP = _hp;
-        
-    _radius = 10;
-    _speed = 250;
-    
-    _color = 0xff000000;
-  }
-  
-  public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
-  }
-
-  public void OnPop() {}
-   
-};
-
 class BalloonDrop {
     public PVector _position;
     protected PVector _direction;
@@ -250,46 +119,6 @@ class BalloonSpawner {
     
   }
   
-  
-};
-
-class Bullet {
-
-  protected int _damageLeft;
-  protected int _speed;
-  protected PShape _shape;
-  protected int _color;
-
-  public float _radius;
-  public int _damage;
-  public PVector _position;
-
-  private PVector _direction;
-
-  public Bullet() {}
-
-  public Bullet(PVector position) {
-    _position = position;
-    _direction = new PVector(0, -1, 0);
-  }
-  
-  public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-  }
-
-  public void Draw() {}
-  
-  public void Shoot(PVector direction) {
-    _direction = direction;
-  }
-
-  public void LosePower(int hp) {
-    _damageLeft = _damageLeft - hp;
-  }
-
-  public boolean OutOfPower() {
-    return _damageLeft < 1;
-  }
   
 };
 
@@ -536,6 +365,15 @@ class EntityManager {
   
 };
 
+enum BulletType {
+  shipTier1,
+  shipTier2,
+  shipTier3,
+  balloonTier1,
+  balloonTier2,
+  balloonTier3
+};
+
 enum Event {
   shoot,
   forward,
@@ -671,6 +509,238 @@ class GameRenderer {
   
 };
 
+class ShipBulletTier1 extends Bullet {
+
+  public ShipBulletTier1(PVector position) {
+    super(position);
+    _damage = 1;
+    _damageLeft = _damage;
+    _speed = 1000;
+    _radius = 4;
+    _color = color(0, 255, 255, 255);
+  }
+
+  public void Draw() {
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);
+  }
+  
+};
+
+class ShipBulletTier2 extends Bullet {
+
+  public ShipBulletTier2(PVector position) {
+    super(position);
+    _damage = 4;
+    _damageLeft = _damage;
+    _speed = 200;
+    _radius = 15;
+    _color = color(255, 165, 0, 255);
+  }
+
+  public void Draw() {
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);    
+  }
+  
+};
+
+class ShipBulletTier3 extends Bullet {
+
+  public ShipBulletTier3(PVector position) {
+    super(position);
+    _damage = 20;
+    _damageLeft = _damage;
+    _speed = 100;
+    _radius = 40;
+    _color = color(255, 255, 0, 255);
+  }
+
+  public void Draw() {
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);    
+  }
+  
+};
+
+
+class Balloon {
+  
+  protected PShape _shape;
+  protected int _color;
+  protected int _maxHP;
+  protected PVector _direction;
+  protected float _speed;
+  
+  public float _radius;
+  public PVector _position;
+  public int _hp;
+
+  public Balloon(PVector position) {
+    _position = position;
+    _direction = new PVector(0, 1, 0);
+    
+    _color = color(random(255), random(255), random(255), PApplet.parseInt(random(100, 200)));
+  }
+  
+  public void Update(float dt) {}
+
+  public void Draw() {      
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);
+  }
+  
+  public void DrawBalloon() {
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);
+  }
+  
+  public void OnHit(int damage) {
+    _hp = _hp - damage;
+  }
+  
+  public boolean Popped() {
+	  return _hp < 1;
+  }
+
+  public void OnPop() {}
+
+};
+
+// Flies out and shoots roughly in direction of enemy
+// Small fast shots
+class FighterBalloon extends Balloon {
+  
+  FighterBalloon(PVector position) {
+    super(position);
+    _hp = 1;
+    _maxHP = _hp;
+    
+    _radius = 15;
+    _speed = 150;
+    _color = 0xff4b5320;
+  }
+  
+};
+
+// Tankier Balloon which carries infinite-until-destroyed fighters
+class CarrierBalloon extends Balloon {
+  
+  CarrierBalloon(PVector position) {
+    super(position);
+    _hp = 10;
+    _maxHP = _hp;
+        
+    _radius = 40;
+    _speed = 50;
+    
+    _color = 0xffd3d3d3;
+  }
+  
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
+  }
+
+  public void OnPop() {}
+};
+
+// Big tanky balloon which shoots bit shots
+class ArmoredBalloon extends Balloon {
+  
+  ArmoredBalloon(PVector position) {
+    super(position);
+    _hp = 25;
+    _maxHP = _hp;
+        
+    _radius = 60;
+    _speed = 25;
+    
+    _color = 0xff36454f;
+  }
+  
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
+  }
+
+  public void OnPop() {}
+  
+};
+
+// Races for player hoping for a collision
+class ScreamerBalloon extends Balloon {
+  
+  ScreamerBalloon(PVector position) {
+    super(position);
+    _hp = 1;
+    _maxHP = _hp;
+        
+    _radius = 10;
+    _speed = 250;
+    
+    _color = 0xff000000;
+  }
+  
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
+  }
+
+  public void OnPop() {}
+   
+};
+
+class Bullet {
+
+  protected int _damageLeft;
+  protected int _speed;
+  protected PShape _shape;
+  protected int _color;
+
+  public float _radius;
+  public int _damage;
+  public PVector _position;
+
+  private PVector _direction;
+
+  public Bullet() {}
+
+  public Bullet(PVector position) {
+    _position = position;
+    _direction = new PVector(0, -1, 0);
+  }
+  
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+  }
+
+  public void Draw() {}
+  
+  public void Shoot(PVector direction) {
+    _direction = direction;
+  }
+
+  public void LosePower(int hp) {
+    _damageLeft = _damageLeft - hp;
+  }
+
+  public boolean OutOfPower() {
+    return _damageLeft < 1;
+  }
+  
+};
+
 class Ship {
 
   public PVector _position;
@@ -732,67 +802,6 @@ class Ship {
     return false;
   }
 };
-
-class ShipBulletTier1 extends Bullet {
-
-  public ShipBulletTier1(PVector position) {
-    super(position);
-    _damage = 1;
-    _damageLeft = _damage;
-    _speed = 1000;
-    _radius = 4;
-    _color = color(0, 255, 255, 255);
-  }
-
-  public void Draw() {
-    fill(_color);
-    ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
-    shape(_shape);
-  }
-  
-};
-
-class ShipBulletTier2 extends Bullet {
-
-  public ShipBulletTier2(PVector position) {
-    super(position);
-    _damage = 4;
-    _damageLeft = _damage;
-    _speed = 200;
-    _radius = 15;
-    _color = color(255, 165, 0, 255);
-  }
-
-  public void Draw() {
-    fill(_color);
-    ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
-    shape(_shape);    
-  }
-  
-};
-
-class ShipBulletTier3 extends Bullet {
-
-  public ShipBulletTier3(PVector position) {
-    super(position);
-    _damage = 20;
-    _damageLeft = _damage;
-    _speed = 100;
-    _radius = 40;
-    _color = color(255, 255, 0, 255);
-  }
-
-  public void Draw() {
-    fill(_color);
-    ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
-    shape(_shape);    
-  }
-  
-};
-
 
 class UIHandler {
 

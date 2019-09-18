@@ -14,7 +14,7 @@ class EntityManager {
     _bullets        = new ArrayList<Bullet>();
     _balloonDrops   = new ArrayList<BalloonDrop>();
     PVector pos     = new PVector (400, 700, 0);
-    _ship           = new Ship(pos);    
+    _ship           = new Ship(pos);
   }
 
   // Update all of our entities besides cannon as that is handled by the event listener
@@ -38,8 +38,8 @@ class EntityManager {
     switch (event) {
     case shoot: 
       if (_ship.CanShoot()) {
-        Bullet b = new Bullet();
-        _ship.Shoot(b); // Carries back the correct bullet
+        Bullet b = new Bullet(_ship.);
+        _ship.Shoot(b); // Carries back the correct bullet?
         _bullets.add(b);
       }
       break;

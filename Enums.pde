@@ -1,13 +1,4 @@
 
-enum BulletType {
-  shipTier1,
-  shipTier2,
-  shipTier3,
-  balloonTier1,
-  balloonTier2,
-  balloonTier3
-};
-
 enum Event {
   shoot,
   forward,
