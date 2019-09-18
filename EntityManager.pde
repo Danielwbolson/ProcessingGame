@@ -25,6 +25,9 @@ class EntityManager {
     for (Bullet b : _bullets)   { 
       b.Update(dt);
     }
+    for (BalloonDrop b : _balloonDrops) {
+      b.Update(dt);
+    }
     _ship.Update(dt);
 
     BoundsCheck();
@@ -38,8 +41,8 @@ class EntityManager {
     switch (event) {
     case shoot: 
       if (_ship.CanShoot()) {
-        Bullet b = new Bullet(_ship.);
-        _ship.Shoot(b); // Carries back the correct bullet?
+        Bullet b = _ship.LoadedBullet();
+        _ship.Shoot(b);
         _bullets.add(b);
       }
       break;
@@ -118,11 +121,23 @@ class EntityManager {
   private void HandleCollisions() {
     for (int i = _balloons.size()-1; i >= 0; i--) {
       for (int j = _bullets.size()-1; j >= 0; j--) {
-        if (Collision(_bullets.get(j), _balloons.get(i))) {
+        Bullet bu = _bullets.get(j);
+        Balloon ba = _balloons.get(i);
+        if (Collision(bu._position, bu._radius, ba._position, ba._radius)) {
           _bullets.get(j).LosePower(_balloons.get(i)._hp);
           _balloons.get(i).OnHit(_bullets.get(j)._damage);
         }
       }
+    }
+
+    for (int i = _balloonDrops.size()-1; i >= 0; i--) {
+      BalloonDrop b = _balloonDrops.get(i);
+
+      if (Collision(_ship._position, _ship._width, b._position, b._radius)) {
+        _ship.GetDrop(b._type);
+        _balloonDrops.remove(i);
+      }
+      
     }
   }
 
@@ -132,22 +147,25 @@ class EntityManager {
     }
   }
 
-  private boolean Collision(Bullet bullet, Balloon balloon) {
+  private boolean Collision(PVector pos1, float radius1, PVector pos2, float radius2) {
 
     // Get Vector from bullet to balloon
-    PVector balloonToBullet = PVector.sub(bullet._position, balloon._position);
+    PVector ptop = PVector.sub(pos1, pos2);
 
     // Calculate total distance between balloon and bullet
-    float dist = balloonToBullet.mag();
+    float dist = ptop.mag();
 
     // If our distance is less than the sum of our radius'
-    return (dist < bullet._radius + balloon._radius);
+    return (dist < radius1 + radius2);
   }
 
   private void DespawnEntities() {
     for (int i = _balloons.size()-1; i >= 0; i--) {
       if (_balloons.get(i).Popped()) {
-        _balloons.get(i).OnPop();
+        if (_balloons.get(i).DropOnPop()) {
+          BalloonDrop b = _balloons.get(i).Drop();
+          _balloonDrops.add(b);
+        }
         _balloons.remove(i);
       }
     }

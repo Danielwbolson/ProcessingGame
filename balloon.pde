@@ -42,7 +42,21 @@ class Balloon {
 	  return _hp < 1;
   }
 
-  public void OnPop() {}
+  public boolean DropOnPop() {
+    if (int(random(10)) == 0) {
+      return true;
+    }
+    return false;
+  }
+
+  public BalloonDrop Drop() {
+    int dropIndex = int(random(2));
+    if (dropIndex == 0) {
+      return new UpgradeDrop(_position);
+    } else {
+      return new BackupDrop(_position);
+    } 
+  }
 
 };
 

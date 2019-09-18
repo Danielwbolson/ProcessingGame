@@ -38,13 +38,3 @@ class Bullet {
   }
   
 };
-
-interface IBulletType {
-  public void Draw();
-  public void Update();
-  public void Shoot();
-};
-
-public class ShipTier1 extends IBulletType {
-  
-}

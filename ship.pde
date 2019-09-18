@@ -8,6 +8,7 @@ class Ship {
   public int _width = 20;
   public int _height = 40;
   public color _color;
+  public BulletType _currBulletType;
 
   private PShape _shape;
   private float _speed = 300;
@@ -20,6 +21,7 @@ class Ship {
     _position = pos;
     _direction = new PVector(0, 0, 0);
     _color = color(255);
+    _currBulletType = BulletType.shipTier1;
   }
 
   public void Update(float dt) {
@@ -38,11 +40,26 @@ class Ship {
   }
 
   public void Shoot(Bullet bullet) {
-
-    // TODO: CREATE NEW NEEDED BULLET
-    
     bullet.Shoot(new PVector(0, -1, 0));
     _lastShot = millis();
+  }
+
+  public Bullet LoadedBullet() {
+
+    switch(_currBulletType) {
+
+      case shipTier1:
+        return new ShipBulletTier1(_position);
+
+      case shipTier2:
+        return new ShipBulletTier2(_position);
+
+      case shipTier3:
+        return new ShipBulletTier3(_position);
+
+      default:
+        return new Bullet(_position);
+    }
   }
 
   public void SlowDown() {    
@@ -53,8 +70,15 @@ class Ship {
     if (abs(_direction.y) < 0.1) {  _direction.y = 0; }
   }
 
-  public void Upgrade() {
-
+  public void GetDrop(BalloonDropType b) {
+    switch (b) {
+      case backup:
+        break;
+      case upgrade:
+        if (_currBulletType != BulletType.shipTier3) {
+          _currBulletType = _currBulletType.Next();
+        }
+    }
   }
 
 

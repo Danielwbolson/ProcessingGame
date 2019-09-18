@@ -39,39 +39,187 @@ public void keyReleased() {
   _gameManager.HandleKeyReleased(); 
 }
 
+class Balloon {
+  
+  protected PShape _shape;
+  protected int _color;
+  protected int _maxHP;
+  protected PVector _direction;
+  protected float _speed;
+  
+  public float _radius;
+  public PVector _position;
+  public int _hp;
+
+  public Balloon(PVector position) {
+    _position = position;
+    _direction = new PVector(0, 1, 0);
+    
+    _color = color(random(255), random(255), random(255), PApplet.parseInt(random(100, 200)));
+  }
+  
+  public void Update(float dt) {}
+
+  public void Draw() {      
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);
+  }
+  
+  public void DrawBalloon() {
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);
+  }
+  
+  public void OnHit(int damage) {
+    _hp = _hp - damage;
+  }
+  
+  public boolean Popped() {
+	  return _hp < 1;
+  }
+
+  public boolean DropOnPop() {
+    if (PApplet.parseInt(random(10)) == 0) {
+      return true;
+    }
+    return false;
+  }
+
+  public BalloonDrop Drop() {
+    int dropIndex = PApplet.parseInt(random(2));
+    if (dropIndex == 0) {
+      return new UpgradeDrop(_position);
+    } else {
+      return new BackupDrop(_position);
+    } 
+  }
+
+};
+
+// Flies out and shoots roughly in direction of enemy
+// Small fast shots
+class FighterBalloon extends Balloon {
+  
+  FighterBalloon(PVector position) {
+    super(position);
+    _hp = 1;
+    _maxHP = _hp;
+    
+    _radius = 15;
+    _speed = 150;
+    _color = 0xff4b5320;
+  }
+  
+};
+
+// Tankier Balloon which carries infinite-until-destroyed fighters
+class CarrierBalloon extends Balloon {
+  
+  CarrierBalloon(PVector position) {
+    super(position);
+    _hp = 10;
+    _maxHP = _hp;
+        
+    _radius = 40;
+    _speed = 50;
+    
+    _color = 0xffd3d3d3;
+  }
+  
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
+  }
+
+  public void OnPop() {}
+};
+
+// Big tanky balloon which shoots bit shots
+class ArmoredBalloon extends Balloon {
+  
+  ArmoredBalloon(PVector position) {
+    super(position);
+    _hp = 25;
+    _maxHP = _hp;
+        
+    _radius = 60;
+    _speed = 25;
+    
+    _color = 0xff36454f;
+  }
+  
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
+  }
+
+  public void OnPop() {}
+  
+};
+
+// Races for player hoping for a collision
+class ScreamerBalloon extends Balloon {
+  
+  ScreamerBalloon(PVector position) {
+    super(position);
+    _hp = 1;
+    _maxHP = _hp;
+        
+    _radius = 10;
+    _speed = 250;
+    
+    _color = 0xff000000;
+  }
+  
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
+  }
+
+  public void OnPop() {}
+   
+};
+
 class BalloonDrop {
     public PVector _position;
+    public BalloonDropType _type;
+
     protected PVector _direction;
+    protected int _speed;
+    protected PShape _shape;
+    protected int _color;
+    protected int _radius;
 
     public BalloonDrop(PVector position) {
         _position = position;
+        _direction = new PVector(0, 1, 0);
+        _speed = 200;
+        _radius = 10;
     }
 
-    public void Update(float dt) {}
+    public void Update(float dt) {
+        _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    }
 
-    public void Draw() {}
+    public void Draw() {
+        fill(_color);
+        rectMode(CENTER);
+        _shape = createShape(RECT, _position.x, _position.y, _radius*2, _radius*2);
+        shape(_shape); 
+    }
+
 };
 
 class BackupDrop extends BalloonDrop {
 
     public BackupDrop(PVector position) {
         super(position);
-    }
-
-    public void Update(float dt) {
-        
-    }
-
-};
-
-class BombDrop extends BalloonDrop {
-
-    public BombDrop(PVector position) {
-        super(position);
-    }
-
-    public void Update(float dt) {
-        
+        _color = color(0, 0, 255, 255);
+        _type = BalloonDropType.backup;
     }
 
 };
@@ -80,10 +228,8 @@ class UpgradeDrop extends BalloonDrop{
 
     public UpgradeDrop(PVector position) {
         super(position);
-    }
-
-    public void Update(float dt) {
-        
+        _color = color(0, 255, 0, 255);
+        _type = BalloonDropType.upgrade;
     }
 
 };
@@ -119,6 +265,46 @@ class BalloonSpawner {
     
   }
   
+  
+};
+
+class Bullet {
+
+  protected int _damageLeft;
+  protected int _speed;
+  protected PShape _shape;
+  protected int _color;
+
+  public float _radius;
+  public int _damage;
+  public PVector _position;
+
+  private PVector _direction;
+
+  public Bullet() {}
+
+  public Bullet(PVector position) {
+    _position = position;
+    _direction = new PVector(0, -1, 0);
+  }
+  
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+  }
+
+  public void Draw() {}
+  
+  public void Shoot(PVector direction) {
+    _direction = direction;
+  }
+
+  public void LosePower(int hp) {
+    _damageLeft = _damageLeft - hp;
+  }
+
+  public boolean OutOfPower() {
+    return _damageLeft < 1;
+  }
   
 };
 
@@ -219,7 +405,7 @@ class EntityManager {
     _bullets        = new ArrayList<Bullet>();
     _balloonDrops   = new ArrayList<BalloonDrop>();
     PVector pos     = new PVector (400, 700, 0);
-    _ship           = new Ship(pos);    
+    _ship           = new Ship(pos);
   }
 
   // Update all of our entities besides cannon as that is handled by the event listener
@@ -228,6 +414,9 @@ class EntityManager {
       b.Update(dt);
     }
     for (Bullet b : _bullets)   { 
+      b.Update(dt);
+    }
+    for (BalloonDrop b : _balloonDrops) {
       b.Update(dt);
     }
     _ship.Update(dt);
@@ -243,8 +432,8 @@ class EntityManager {
     switch (event) {
     case shoot: 
       if (_ship.CanShoot()) {
-        Bullet b = new Bullet();
-        _ship.Shoot(b); // Carries back the correct bullet
+        Bullet b = _ship.LoadedBullet();
+        _ship.Shoot(b);
         _bullets.add(b);
       }
       break;
@@ -323,11 +512,23 @@ class EntityManager {
   private void HandleCollisions() {
     for (int i = _balloons.size()-1; i >= 0; i--) {
       for (int j = _bullets.size()-1; j >= 0; j--) {
-        if (Collision(_bullets.get(j), _balloons.get(i))) {
+        Bullet bu = _bullets.get(j);
+        Balloon ba = _balloons.get(i);
+        if (Collision(bu._position, bu._radius, ba._position, ba._radius)) {
           _bullets.get(j).LosePower(_balloons.get(i)._hp);
           _balloons.get(i).OnHit(_bullets.get(j)._damage);
         }
       }
+    }
+
+    for (int i = _balloonDrops.size()-1; i >= 0; i--) {
+      BalloonDrop b = _balloonDrops.get(i);
+
+      if (Collision(_ship._position, _ship._width, b._position, b._radius)) {
+        _ship.GetDrop(b._type);
+        _balloonDrops.remove(i);
+      }
+      
     }
   }
 
@@ -337,22 +538,25 @@ class EntityManager {
     }
   }
 
-  private boolean Collision(Bullet bullet, Balloon balloon) {
+  private boolean Collision(PVector pos1, float radius1, PVector pos2, float radius2) {
 
     // Get Vector from bullet to balloon
-    PVector balloonToBullet = PVector.sub(bullet._position, balloon._position);
+    PVector ptop = PVector.sub(pos1, pos2);
 
     // Calculate total distance between balloon and bullet
-    float dist = balloonToBullet.mag();
+    float dist = ptop.mag();
 
     // If our distance is less than the sum of our radius'
-    return (dist < bullet._radius + balloon._radius);
+    return (dist < radius1 + radius2);
   }
 
   private void DespawnEntities() {
     for (int i = _balloons.size()-1; i >= 0; i--) {
       if (_balloons.get(i).Popped()) {
-        _balloons.get(i).OnPop();
+        if (_balloons.get(i).DropOnPop()) {
+          BalloonDrop b = _balloons.get(i).Drop();
+          _balloonDrops.add(b);
+        }
         _balloons.remove(i);
       }
     }
@@ -365,13 +569,23 @@ class EntityManager {
   
 };
 
-enum BulletType {
+public enum BalloonDropType {
+  backup,
+  upgrade
+};
+
+public enum BulletType {
   shipTier1,
   shipTier2,
   shipTier3,
   balloonTier1,
   balloonTier2,
-  balloonTier3
+  balloonTier3;
+
+  public static BulletType[] vals = values();
+  public BulletType Next() {
+    return vals[ordinal() + 1];
+  }
 };
 
 enum Event {
@@ -509,6 +723,97 @@ class GameRenderer {
   
 };
 
+class Ship {
+
+  public PVector _position;
+  public PVector _direction;
+  public boolean _slowingDownVertical;
+  public boolean _slowingDownHorizontal;
+  public int _width = 20;
+  public int _height = 40;
+  public int _color;
+  public BulletType _currBulletType;
+
+  private PShape _shape;
+  private float _speed = 300;
+  private int _shotCooldownTime = CooldownTime.shotCooldown.getCode();
+  private int _backupCooldownTime = CooldownTime.backupCooldown.getCode();
+  private int _bombCooldownTime = CooldownTime.bombCooldown.getCode();
+  private int _lastShot;
+
+  public Ship(PVector pos) {
+    _position = pos;
+    _direction = new PVector(0, 0, 0);
+    _color = color(255);
+    _currBulletType = BulletType.shipTier1;
+  }
+
+  public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    
+    if (_slowingDownHorizontal || _slowingDownVertical) {
+      SlowDown();
+    }
+  }
+  
+  public void Draw() {
+    fill(_color);
+    rectMode(CENTER);
+    _shape = createShape(RECT, _position.x, _position.y, _width, _height);
+    shape(_shape);
+  }
+
+  public void Shoot(Bullet bullet) {
+    bullet.Shoot(new PVector(0, -1, 0));
+    _lastShot = millis();
+  }
+
+  public Bullet LoadedBullet() {
+
+    switch(_currBulletType) {
+
+      case shipTier1:
+        return new ShipBulletTier1(_position);
+
+      case shipTier2:
+        return new ShipBulletTier2(_position);
+
+      case shipTier3:
+        return new ShipBulletTier3(_position);
+
+      default:
+        return new Bullet(_position);
+    }
+  }
+
+  public void SlowDown() {    
+    if (_slowingDownHorizontal) { _direction.x = _direction.x * 0.9f; }
+    if (_slowingDownVertical) { _direction.y = _direction.y * 0.9f; }
+
+    if (abs(_direction.x) < 0.1f) {  _direction.x = 0; }
+    if (abs(_direction.y) < 0.1f) {  _direction.y = 0; }
+  }
+
+  public void GetDrop(BalloonDropType b) {
+    switch (b) {
+      case backup:
+        break;
+      case upgrade:
+        if (_currBulletType != BulletType.shipTier3) {
+          _currBulletType = _currBulletType.Next();
+        }
+    }
+  }
+
+
+  private boolean CanShoot() {
+    if (millis() - _lastShot > _shotCooldownTime) {
+      return true;
+    }
+    return false;
+  }
+};
+
 class ShipBulletTier1 extends Bullet {
 
   public ShipBulletTier1(PVector position) {
@@ -569,239 +874,6 @@ class ShipBulletTier3 extends Bullet {
   
 };
 
-
-class Balloon {
-  
-  protected PShape _shape;
-  protected int _color;
-  protected int _maxHP;
-  protected PVector _direction;
-  protected float _speed;
-  
-  public float _radius;
-  public PVector _position;
-  public int _hp;
-
-  public Balloon(PVector position) {
-    _position = position;
-    _direction = new PVector(0, 1, 0);
-    
-    _color = color(random(255), random(255), random(255), PApplet.parseInt(random(100, 200)));
-  }
-  
-  public void Update(float dt) {}
-
-  public void Draw() {      
-    fill(_color);
-    ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
-    shape(_shape);
-  }
-  
-  public void DrawBalloon() {
-    fill(_color);
-    ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
-    shape(_shape);
-  }
-  
-  public void OnHit(int damage) {
-    _hp = _hp - damage;
-  }
-  
-  public boolean Popped() {
-	  return _hp < 1;
-  }
-
-  public void OnPop() {}
-
-};
-
-// Flies out and shoots roughly in direction of enemy
-// Small fast shots
-class FighterBalloon extends Balloon {
-  
-  FighterBalloon(PVector position) {
-    super(position);
-    _hp = 1;
-    _maxHP = _hp;
-    
-    _radius = 15;
-    _speed = 150;
-    _color = 0xff4b5320;
-  }
-  
-};
-
-// Tankier Balloon which carries infinite-until-destroyed fighters
-class CarrierBalloon extends Balloon {
-  
-  CarrierBalloon(PVector position) {
-    super(position);
-    _hp = 10;
-    _maxHP = _hp;
-        
-    _radius = 40;
-    _speed = 50;
-    
-    _color = 0xffd3d3d3;
-  }
-  
-  public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
-  }
-
-  public void OnPop() {}
-};
-
-// Big tanky balloon which shoots bit shots
-class ArmoredBalloon extends Balloon {
-  
-  ArmoredBalloon(PVector position) {
-    super(position);
-    _hp = 25;
-    _maxHP = _hp;
-        
-    _radius = 60;
-    _speed = 25;
-    
-    _color = 0xff36454f;
-  }
-  
-  public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
-  }
-
-  public void OnPop() {}
-  
-};
-
-// Races for player hoping for a collision
-class ScreamerBalloon extends Balloon {
-  
-  ScreamerBalloon(PVector position) {
-    super(position);
-    _hp = 1;
-    _maxHP = _hp;
-        
-    _radius = 10;
-    _speed = 250;
-    
-    _color = 0xff000000;
-  }
-  
-  public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
-  }
-
-  public void OnPop() {}
-   
-};
-
-class Bullet {
-
-  protected int _damageLeft;
-  protected int _speed;
-  protected PShape _shape;
-  protected int _color;
-
-  public float _radius;
-  public int _damage;
-  public PVector _position;
-
-  private PVector _direction;
-
-  public Bullet() {}
-
-  public Bullet(PVector position) {
-    _position = position;
-    _direction = new PVector(0, -1, 0);
-  }
-  
-  public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-  }
-
-  public void Draw() {}
-  
-  public void Shoot(PVector direction) {
-    _direction = direction;
-  }
-
-  public void LosePower(int hp) {
-    _damageLeft = _damageLeft - hp;
-  }
-
-  public boolean OutOfPower() {
-    return _damageLeft < 1;
-  }
-  
-};
-
-class Ship {
-
-  public PVector _position;
-  public PVector _direction;
-  public boolean _slowingDownVertical;
-  public boolean _slowingDownHorizontal;
-  public int _width = 20;
-  public int _height = 40;
-  public int _color;
-
-  private PShape _shape;
-  private float _speed = 300;
-  private int _shotCooldownTime = CooldownTime.shotCooldown.getCode();
-  private int _backupCooldownTime = CooldownTime.backupCooldown.getCode();
-  private int _bombCooldownTime = CooldownTime.bombCooldown.getCode();
-  private int _lastShot;
-
-  public Ship(PVector pos) {
-    _position = pos;
-    _direction = new PVector(0, 0, 0);
-    _color = color(255);
-  }
-
-  public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
-    
-    if (_slowingDownHorizontal || _slowingDownVertical) {
-      SlowDown();
-    }
-  }
-  
-  public void Draw() {
-    fill(_color);
-    rectMode(CENTER);
-    _shape = createShape(RECT, _position.x, _position.y, _width, _height);
-    shape(_shape);
-  }
-
-  public void Shoot(Bullet bullet) {
-
-    // TODO: CREATE NEW NEEDED BULLET
-
-    bullet.Shoot(new PVector(0, -1, 0));
-    _lastShot = millis();
-  }
-
-  public void SlowDown() {    
-    if (_slowingDownHorizontal) { _direction.x = _direction.x * 0.9f; }
-    if (_slowingDownVertical) { _direction.y = _direction.y * 0.9f; }
-
-    if (abs(_direction.x) < 0.1f) {  _direction.x = 0; }
-    if (abs(_direction.y) < 0.1f) {  _direction.y = 0; }
-  }
-
-  private boolean CanShoot() {
-    if (millis() - _lastShot > _shotCooldownTime) {
-      return true;
-    }
-    return false;
-  }
-};
 
 class UIHandler {
 
