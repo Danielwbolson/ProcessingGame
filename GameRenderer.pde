@@ -5,7 +5,7 @@ class GameRenderer {
   private ArrayList<Bullet> _bullets;
   private Ship _ship;
   private ArrayList<Button> _buttons;
-  private ArrayList<_balloonDrops> _balloonDrops;
+  private ArrayList<BalloonDrop> _balloonDrops;
   
   GameRenderer(EntityManager em, UIHandler ui) {
     _balloons = em._balloons;

@@ -3,12 +3,13 @@ class BalloonDrop {
     public PVector _position;
     protected PVector _direction;
 
-    public BalloonDrop(Pvector position) {
+    public BalloonDrop(PVector position) {
         _position = position;
     }
 
     public void Update(float dt) {}
 
+    public void Draw() {}
 };
 
 class BackupDrop extends BalloonDrop {
@@ -37,7 +38,7 @@ class BombDrop extends BalloonDrop {
 
 class UpgradeDrop extends BalloonDrop{
 
-    public Upgrade(PVector position) {
+    public UpgradeDrop(PVector position) {
         super(position);
     }
 

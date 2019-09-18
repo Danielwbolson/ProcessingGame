@@ -11,8 +11,10 @@ class Ship {
 
   private PShape _shape;
   private float _speed = 300;
-  private int _sbCooldownTime = CooldownTime.smallCooldown.getCode();
-  private int _lastSmallShot;
+  private int _shotCooldownTime = CooldownTime.shotCooldown.getCode();
+  private int _backupCooldownTime = CooldownTime.backupCooldown.getCode();
+  private int _bombCooldownTime = CooldownTime.bombCooldown.getCode();
+  private int _lastShot;
 
   public Ship(PVector pos) {
     _position = pos;
@@ -36,8 +38,11 @@ class Ship {
   }
 
   public void Shoot(Bullet bullet) {
+
+    // TODO: CREATE NEW NEEDED BULLET
+
     bullet.Shoot(new PVector(0, -1, 0));
-    _lastSmallShot = millis();
+    _lastShot = millis();
   }
 
   public void SlowDown() {    
@@ -49,7 +54,7 @@ class Ship {
   }
 
   private boolean CanShoot() {
-    if (millis() - _lastSmallShot > _sbCooldownTime) {
+    if (millis() - _lastShot > _shotCooldownTime) {
       return true;
     }
     return false;

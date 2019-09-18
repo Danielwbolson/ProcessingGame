@@ -12,6 +12,8 @@ class Bullet {
 
   private PVector _direction;
 
+  public Bullet() {}
+
   public Bullet(PVector position) {
     _position = position;
     _direction = new PVector(0, -1, 0);
@@ -21,12 +23,7 @@ class Bullet {
     _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
   }
 
-  public void Draw() {
-      fill(_color);
-      ellipseMode(CENTER);
-      _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
-      shape(_shape);
-  }
+  public void Draw() {}
   
   public void Shoot(PVector direction) {
     _direction = direction;
@@ -38,45 +35,6 @@ class Bullet {
 
   public boolean OutOfPower() {
     return _damageLeft < 1;
-  }
-  
-};
-
-class LargeBullet extends Bullet {
-
-  public LargeBullet(PVector position) {
-    super(position);
-    _damage = 20;
-    _damageLeft = _damage;
-    _speed = 100;
-    _radius = 40;
-    _color = color(255, 255, 0, 255);
-  }
-  
-};
-
-class MediumBullet extends Bullet {
-
-  public MediumBullet(PVector position) {
-    super(position);
-    _damage = 4;
-    _damageLeft = _damage;
-    _speed = 200;
-    _radius = 15;
-    _color = color(255, 165, 0, 255);
-  }
-  
-};
-
-class SmallBullet extends Bullet {
-
-  public SmallBullet(PVector position) {
-    super(position);
-    _damage = 1;
-    _damageLeft = _damage;
-    _speed = 1000;
-    _radius = 4;
-    _color = color(0, 255, 255, 255);
   }
   
 };

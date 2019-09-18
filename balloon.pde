@@ -80,6 +80,8 @@ class CarrierBalloon extends Balloon {
     _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
     _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
+
+  public void OnPop() {}
 };
 
 // Big tanky balloon which shoots bit shots
@@ -101,9 +103,7 @@ class ArmoredBalloon extends Balloon {
     _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
 
-  public boolean OnPop() {
-    Upgrade
-  }
+  public void OnPop() {}
   
 };
 
@@ -125,5 +125,7 @@ class ScreamerBalloon extends Balloon {
     _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
     _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
-  
+
+  public void OnPop() {}
+   
 };

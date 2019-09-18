@@ -11,10 +11,10 @@ class EntityManager {
     _balloonSpawner = new BalloonSpawner();
     _balloons       = _balloonSpawner._balloons;
 
-    _bullets    = new ArrayList<Bullet>();
-    _upgrades   = new ArrayList<Upgrade>();
-    PVector pos = new PVector (400, 700, 0);
-    _ship       = new Ship(pos);    
+    _bullets        = new ArrayList<Bullet>();
+    _balloonDrops   = new ArrayList<BalloonDrop>();
+    PVector pos     = new PVector (400, 700, 0);
+    _ship           = new Ship(pos);    
   }
 
   // Update all of our entities besides cannon as that is handled by the event listener
@@ -38,9 +38,9 @@ class EntityManager {
     switch (event) {
     case shoot: 
       if (_ship.CanShoot()) {
-        Bullet b = new SmallBullet(_ship._position);
+        Bullet b = new Bullet();
+        _ship.Shoot(b); // Carries back the correct bullet
         _bullets.add(b);
-        _ship.Shoot(b);
       }
       break;
 

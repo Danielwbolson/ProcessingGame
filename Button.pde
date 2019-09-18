@@ -28,7 +28,7 @@ class Button {
     strokeWeight(_strokeWeight);
     fill(_color);
     rectMode(CENTER);
-    b._shape = createShape(RECT, _position.x, _position.y, _radius*2, _radius*2);
+    _shape = createShape(RECT, _position.x, _position.y, _radius*2, _radius*2);
     shape(_shape); 
     
     pop();

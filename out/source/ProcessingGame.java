@@ -14,7 +14,10 @@ import java.io.IOException;
 
 public class ProcessingGame extends PApplet {
 
-  
+
+
+// Run with Visual Studio Code:
+// Ctrl + Shift + B
 GameManager _gameManager;
 
 public void setup() {    
@@ -56,6 +59,13 @@ class Balloon {
   }
   
   public void Update(float dt) {}
+
+  public void Draw() {      
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);
+  }
   
   public void DrawBalloon() {
     fill(_color);
@@ -71,6 +81,8 @@ class Balloon {
   public boolean Popped() {
 	  return _hp < 1;
   }
+
+  public void OnPop() {}
 
 };
 
@@ -108,6 +120,8 @@ class CarrierBalloon extends Balloon {
     _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
     _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
+
+  public void OnPop() {}
 };
 
 // Big tanky balloon which shoots bit shots
@@ -128,6 +142,8 @@ class ArmoredBalloon extends Balloon {
     _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
     _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
+
+  public void OnPop() {}
   
 };
 
@@ -149,7 +165,58 @@ class ScreamerBalloon extends Balloon {
     _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
     _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
-  
+
+  public void OnPop() {}
+   
+};
+
+class BalloonDrop {
+    public PVector _position;
+    protected PVector _direction;
+
+    public BalloonDrop(PVector position) {
+        _position = position;
+    }
+
+    public void Update(float dt) {}
+
+    public void Draw() {}
+};
+
+class BackupDrop extends BalloonDrop {
+
+    public BackupDrop(PVector position) {
+        super(position);
+    }
+
+    public void Update(float dt) {
+        
+    }
+
+};
+
+class BombDrop extends BalloonDrop {
+
+    public BombDrop(PVector position) {
+        super(position);
+    }
+
+    public void Update(float dt) {
+        
+    }
+
+};
+
+class UpgradeDrop extends BalloonDrop{
+
+    public UpgradeDrop(PVector position) {
+        super(position);
+    }
+
+    public void Update(float dt) {
+        
+    }
+
 };
 
 class BalloonSpawner {
@@ -199,6 +266,8 @@ class Bullet {
 
   private PVector _direction;
 
+  public Bullet() {}
+
   public Bullet(PVector position) {
     _position = position;
     _direction = new PVector(0, -1, 0);
@@ -207,6 +276,8 @@ class Bullet {
   public void Update(float dt) {
     _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
   }
+
+  public void Draw() {}
   
   public void Shoot(PVector direction) {
     _direction = direction;
@@ -218,45 +289,6 @@ class Bullet {
 
   public boolean OutOfPower() {
     return _damageLeft < 1;
-  }
-  
-};
-
-class LargeBullet extends Bullet {
-
-  public LargeBullet(PVector position) {
-    super(position);
-    _damage = 20;
-    _damageLeft = _damage;
-    _speed = 100;
-    _radius = 40;
-    _color = color(255, 255, 0, 255);
-  }
-  
-};
-
-class MediumBullet extends Bullet {
-
-  public MediumBullet(PVector position) {
-    super(position);
-    _damage = 4;
-    _damageLeft = _damage;
-    _speed = 200;
-    _radius = 15;
-    _color = color(255, 165, 0, 255);
-  }
-  
-};
-
-class SmallBullet extends Bullet {
-
-  public SmallBullet(PVector position) {
-    super(position);
-    _damage = 1;
-    _damageLeft = _damage;
-    _speed = 1000;
-    _radius = 4;
-    _color = color(0, 255, 255, 255);
   }
   
 };
@@ -281,6 +313,19 @@ class Button {
     _color = c;
     _strokeWeight = 1;
     _strokeVal = 0;
+  }
+
+  public void Draw() {      
+    push();
+    
+    stroke(_strokeVal);
+    strokeWeight(_strokeWeight);
+    fill(_color);
+    rectMode(CENTER);
+    _shape = createShape(RECT, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape); 
+    
+    pop();
   }
   
   // Check if the user has clicked inside our button
@@ -334,16 +379,18 @@ class EntityManager {
 
   private ArrayList<Balloon> _balloons;
   private ArrayList<Bullet> _bullets;
+  private ArrayList<BalloonDrop> _balloonDrops;
   private Ship _ship;
   private BalloonSpawner _balloonSpawner;
 
   public EntityManager() {
-    _bullets    = new ArrayList<Bullet>();
-    PVector pos = new PVector (400, 700, 0);
-    _ship       = new Ship(pos);
-    
     _balloonSpawner = new BalloonSpawner();
     _balloons       = _balloonSpawner._balloons;
+
+    _bullets        = new ArrayList<Bullet>();
+    _balloonDrops   = new ArrayList<BalloonDrop>();
+    PVector pos     = new PVector (400, 700, 0);
+    _ship           = new Ship(pos);    
   }
 
   // Update all of our entities besides cannon as that is handled by the event listener
@@ -367,9 +414,9 @@ class EntityManager {
     switch (event) {
     case shoot: 
       if (_ship.CanShoot()) {
-        Bullet b = new SmallBullet(_ship._position);
+        Bullet b = new Bullet();
+        _ship.Shoot(b); // Carries back the correct bullet
         _bullets.add(b);
-        _ship.Shoot(b);
       }
       break;
 
@@ -476,6 +523,7 @@ class EntityManager {
   private void DespawnEntities() {
     for (int i = _balloons.size()-1; i >= 0; i--) {
       if (_balloons.get(i).Popped()) {
+        _balloons.get(i).OnPop();
         _balloons.remove(i);
       }
     }
@@ -503,9 +551,9 @@ enum Event {
 // Shot cooldowns in milliseconds
 // I want an enum so that values can be shared amongst classes and only changed in one place
 enum CooldownTime {
-  smallCooldown(50),
-  mediumCooldown(500),
-  largeCooldown(2000);
+  shotCooldown(50),
+  backupCooldown(500),
+  bombCooldown(2000);
   
   private final int _code;
   private CooldownTime (int code) {
@@ -588,13 +636,14 @@ class GameRenderer {
   private ArrayList<Bullet> _bullets;
   private Ship _ship;
   private ArrayList<Button> _buttons;
+  private ArrayList<BalloonDrop> _balloonDrops;
   
   GameRenderer(EntityManager em, UIHandler ui) {
     _balloons = em._balloons;
-    _bullets = em._bullets;
-    _ship = em._ship;
-
-    _buttons = ui._buttons;
+    _bullets  = em._bullets;
+    _ship     = em._ship;
+    _balloonDrops = em._balloonDrops;
+    _buttons  = ui._buttons;
   }
   
   public void Render() {
@@ -602,39 +651,22 @@ class GameRenderer {
     background(100, 150, 255, 200);
     
     for (Balloon b : _balloons) { 
-      fill(b._color);
-      ellipseMode(CENTER);
-      b._shape = createShape(ELLIPSE, b._position.x, b._position.y, b._radius*2, b._radius*2);
-      shape(b._shape);
+      b.Draw();
     }
     
     for (Bullet b : _bullets)   { 
-      fill(b._color);
-      ellipseMode(CENTER);
-      b._shape = createShape(ELLIPSE, b._position.x, b._position.y, b._radius*2, b._radius*2);
-      shape(b._shape);
+      b.Draw();
     }
     
     for (Button b : _buttons) {
-      
-      push();
-      
-      stroke(b._strokeVal);
-      strokeWeight(b._strokeWeight);
-      fill(b._color);
-      rectMode(CENTER);
-      b._shape = createShape(RECT, b._position.x, b._position.y, b._radius*2, b._radius*2);
-      shape(b._shape); 
-      
-      pop();
-      
+      b.Draw();      
     }
-    
-    fill(_ship._color);
-    rectMode(CENTER);
-    _ship._shape = createShape(RECT, _ship._position.x, _ship._position.y, _ship._width, _ship._height);
-    shape(_ship._shape);
-    
+
+    for (BalloonDrop b : _balloonDrops) {
+      b.Draw();
+    }
+
+    _ship.Draw();    
   }
   
 };
@@ -651,8 +683,10 @@ class Ship {
 
   private PShape _shape;
   private float _speed = 300;
-  private int _sbCooldownTime = CooldownTime.smallCooldown.getCode();
-  private int _lastSmallShot;
+  private int _shotCooldownTime = CooldownTime.shotCooldown.getCode();
+  private int _backupCooldownTime = CooldownTime.backupCooldown.getCode();
+  private int _bombCooldownTime = CooldownTime.bombCooldown.getCode();
+  private int _lastShot;
 
   public Ship(PVector pos) {
     _position = pos;
@@ -668,9 +702,19 @@ class Ship {
     }
   }
   
+  public void Draw() {
+    fill(_color);
+    rectMode(CENTER);
+    _shape = createShape(RECT, _position.x, _position.y, _width, _height);
+    shape(_shape);
+  }
+
   public void Shoot(Bullet bullet) {
+
+    // TODO: CREATE NEW NEEDED BULLET
+
     bullet.Shoot(new PVector(0, -1, 0));
-    _lastSmallShot = millis();
+    _lastShot = millis();
   }
 
   public void SlowDown() {    
@@ -682,12 +726,73 @@ class Ship {
   }
 
   private boolean CanShoot() {
-    if (millis() - _lastSmallShot > _sbCooldownTime) {
+    if (millis() - _lastShot > _shotCooldownTime) {
       return true;
     }
     return false;
   }
 };
+
+class ShipBulletTier1 extends Bullet {
+
+  public ShipBulletTier1(PVector position) {
+    super(position);
+    _damage = 1;
+    _damageLeft = _damage;
+    _speed = 1000;
+    _radius = 4;
+    _color = color(0, 255, 255, 255);
+  }
+
+  public void Draw() {
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);
+  }
+  
+};
+
+class ShipBulletTier2 extends Bullet {
+
+  public ShipBulletTier2(PVector position) {
+    super(position);
+    _damage = 4;
+    _damageLeft = _damage;
+    _speed = 200;
+    _radius = 15;
+    _color = color(255, 165, 0, 255);
+  }
+
+  public void Draw() {
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);    
+  }
+  
+};
+
+class ShipBulletTier3 extends Bullet {
+
+  public ShipBulletTier3(PVector position) {
+    super(position);
+    _damage = 20;
+    _damageLeft = _damage;
+    _speed = 100;
+    _radius = 40;
+    _color = color(255, 255, 0, 255);
+  }
+
+  public void Draw() {
+    fill(_color);
+    ellipseMode(CENTER);
+    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
+    shape(_shape);    
+  }
+  
+};
+
 
 class UIHandler {
 
@@ -775,7 +880,6 @@ class UIHandler {
   }
 
 };
-
   public void settings() {  size(800, 800); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "ProcessingGame" };
