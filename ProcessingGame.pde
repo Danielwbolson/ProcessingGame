@@ -28,16 +28,15 @@ void keyReleased() {
 }
 
 void mouseClicked() {
-    if (mouseButton == RIGHT) {
-      paused = !paused;
+  if (mouseButton == RIGHT) {
+    paused = !paused;
 
-      if (paused) {
-        noLoop();
-        timePaused = millis()/1000.0;
-      } else {
-        loop();
-        offset = millis()/1000.0 - timePaused;
-      }
+    if (paused) {
+      noLoop();
+      timePaused = millis()/1000.0;
+    } else {
+      loop();
+      offset = millis()/1000.0 - timePaused;
     }
-
   }
+}
