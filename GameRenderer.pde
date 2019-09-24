@@ -15,7 +15,7 @@ class GameRenderer {
     _buttons  = ui._buttons;
   }
   
-  public void Render() {
+  public void Render(int lives) {
     
     background(100, 150, 255, 200);
     
@@ -27,15 +27,25 @@ class GameRenderer {
       b.Draw();
     }
     
-    for (Button b : _buttons) {
+/*     for (Button b : _buttons) {
       b.Draw();      
-    }
+    } */
 
     for (BalloonDrop b : _balloonDrops) {
       b.Draw();
     }
 
-    _ship.Draw();    
+    _ship.Draw();  
+
+    textSize(32);
+    text(lives + " lives", 25, 750);  
+  }
+
+  public void Lose() {
+    background(0, 0, 0, 255);
+    textSize(60);
+    textAlign(CENTER);
+    text("You lose!", width/2, height/2);
   }
   
 };

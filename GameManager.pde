@@ -6,6 +6,8 @@ class GameManager {
   private GameRenderer _gameRenderer;
   private float _elapsedTime;
 
+  private int _lives = 5;
+
   GameManager() {
     _entityManager = new EntityManager();
     _uiHandler = new UIHandler(this);
@@ -16,15 +18,23 @@ class GameManager {
     _elapsedTime = millis();
   }
   
-  public void Update() {
-    float dt = calculateDt();
-    println(1.0 / dt);
+  public void Update(float offset) {
+    float dt = calculateDt() - offset;
+    println(dt);
     
     // Update our entities and handle our user input
     // Update UI first so that we can give correct information to our manager
     _uiHandler.HandleInput();
+
     _entityManager.Update(dt);
-    _gameRenderer.Render();
+    _lives = _lives - _entityManager._hits;
+
+    _gameRenderer.Render(_lives);
+
+    if (_lives <= 0) {
+      noLoop();
+      _gameRenderer.Lose();
+    }
   }
   
   public void EventListener(Event event) {

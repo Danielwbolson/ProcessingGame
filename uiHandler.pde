@@ -50,7 +50,7 @@ class UIHandler {
     }
     
     KeyEvents();
-          
+
   }
 
   private void KeyEvents() {
@@ -64,6 +64,7 @@ class UIHandler {
     
     if (pressed1) { _gameManager.EventListener(Event.backup); }
     if (pressed2) { _gameManager.EventListener(Event.bomb); }
+
   }
 
   private void HandleKeyPressed() {

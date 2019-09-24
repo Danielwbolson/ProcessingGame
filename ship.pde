@@ -11,7 +11,7 @@ class Ship {
   public BulletType _currBulletType;
 
   private PShape _shape;
-  private float _speed = 300;
+  private float _speed = 500;
   private int _shotCooldownTime = CooldownTime.shotCooldown.getCode();
   private int _backupCooldownTime = CooldownTime.backupCooldown.getCode();
   private int _bombCooldownTime = CooldownTime.bombCooldown.getCode();
@@ -63,8 +63,8 @@ class Ship {
   }
 
   public void SlowDown() {    
-    if (_slowingDownHorizontal) { _direction.x = _direction.x * 0.9f; }
-    if (_slowingDownVertical) { _direction.y = _direction.y * 0.9f; }
+    if (_slowingDownHorizontal) { _direction.x = _direction.x * 0.8f; }
+    if (_slowingDownVertical) { _direction.y = _direction.y * 0.8f; }
 
     if (abs(_direction.x) < 0.1) {  _direction.x = 0; }
     if (abs(_direction.y) < 0.1) {  _direction.y = 0; }

@@ -7,6 +7,8 @@ class EntityManager {
   private Ship _ship;
   private BalloonSpawner _balloonSpawner;
 
+  public int _hits = 0;
+
   public EntityManager() {
     _balloonSpawner = new BalloonSpawner();
     _balloons       = _balloonSpawner._balloons;
@@ -86,10 +88,13 @@ class EntityManager {
 
   // Check if our balloons, bullets, or ship have gone outside the window
   private void BoundsCheck() {
+    _hits = 0;
+    
     for (int i = _balloons.size()-1; i >= 0; i--) {
       Balloon b = _balloons.get(i);
       if (b._position.y > height) {
         _balloons.remove(i);
+        _hits = _hits + 1;
       }
     }
     for (int i = _bullets.size()-1; i >= 0; i--) {
@@ -142,8 +147,8 @@ class EntityManager {
   }
 
   private void SpawnBalloons() {   
-    if (int(random(random(15, 60))) == 0) {
-      _balloons.add(_balloonSpawner.AddBalloon());
+    if (int(random(30)) == 0) {
+      _balloons.add(_balloonSpawner.AddBalloon(_ship._position));
     }
   }
 

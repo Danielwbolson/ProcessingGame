@@ -5,15 +5,24 @@ class Balloon {
   protected color _color;
   protected int _maxHP;
   protected PVector _direction;
+  protected PVector _destination;
   protected float _speed;
+  protected float _aggression;
   
   public float _radius;
   public PVector _position;
   public int _hp;
 
-  public Balloon(PVector position) {
+  public Balloon(PVector position, PVector destination, float aggression) {
     _position = position;
-    _direction = new PVector(0, 1, 0);
+    _aggression = aggression;
+
+    if (destination != null) {
+      _destination = destination;
+      _direction = PVector.sub(_destination, _position).normalize();
+    } else {
+      _direction = new PVector(0, 1, 0);
+    }
     
     _color = color(random(255), random(255), random(255), int(random(100, 200)));
   }
@@ -21,13 +30,6 @@ class Balloon {
   public void Update(float dt) {}
 
   public void Draw() {      
-    fill(_color);
-    ellipseMode(CENTER);
-    _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
-    shape(_shape);
-  }
-  
-  public void DrawBalloon() {
     fill(_color);
     ellipseMode(CENTER);
     _shape = createShape(ELLIPSE, _position.x, _position.y, _radius*2, _radius*2);
@@ -64,14 +66,19 @@ class Balloon {
 // Small fast shots
 class FighterBalloon extends Balloon {
   
-  FighterBalloon(PVector position) {
-    super(position);
-    _hp = 1;
+  FighterBalloon(PVector position, PVector destination, float aggression) {
+    super(position, destination, aggression);
+    _hp = 2;
     _maxHP = _hp;
     
     _radius = 15;
     _speed = 150;
     _color = #4b5320;
+  }
+
+    public void Update(float dt) {
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt * _aggression));
+    _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
   
 };
@@ -79,53 +86,50 @@ class FighterBalloon extends Balloon {
 // Tankier Balloon which carries infinite-until-destroyed fighters
 class CarrierBalloon extends Balloon {
   
-  CarrierBalloon(PVector position) {
-    super(position);
-    _hp = 10;
+  CarrierBalloon(PVector position, PVector destination, float aggression) {
+    super(position, destination, aggression);
+    _hp = 20;
     _maxHP = _hp;
         
     _radius = 40;
-    _speed = 50;
+    _speed = 40;
     
     _color = #d3d3d3;
   }
   
   public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt * _aggression));
     _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
 
-  public void OnPop() {}
 };
 
 // Big tanky balloon which shoots bit shots
 class ArmoredBalloon extends Balloon {
   
-  ArmoredBalloon(PVector position) {
-    super(position);
-    _hp = 25;
+  ArmoredBalloon(PVector position, PVector destination, float aggression) {
+    super(position, destination, aggression);
+    _hp = 50;
     _maxHP = _hp;
         
     _radius = 60;
-    _speed = 25;
+    _speed = 10;
     
     _color = #36454f;
   }
   
   public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt * _aggression));
     _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
-
-  public void OnPop() {}
   
 };
 
 // Races for player hoping for a collision
 class ScreamerBalloon extends Balloon {
   
-  ScreamerBalloon(PVector position) {
-    super(position);
+  ScreamerBalloon(PVector position, PVector destination, float aggression) {
+    super(position, destination, aggression);
     _hp = 1;
     _maxHP = _hp;
         
@@ -136,10 +140,8 @@ class ScreamerBalloon extends Balloon {
   }
   
   public void Update(float dt) {
-    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt));
+    _position = PVector.add(_position, PVector.mult(_direction, _speed * dt * _aggression));
     _color = color(red(_color), green(_color), blue(_color), 255 * ((float)_hp / _maxHP));
   }
-
-  public void OnPop() {}
    
 };
